@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 
 const signUp = async (req, res) => {
+
     const { pseudo, email, password } = req.body;
 
     try {
@@ -10,7 +11,8 @@ const signUp = async (req, res) => {
     catch (err) {
         res.status(500).json({ err: err });
     }
-} 
+
+}
 
 module.exports = {
     signUp
