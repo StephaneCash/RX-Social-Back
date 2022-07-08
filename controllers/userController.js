@@ -18,4 +18,27 @@ module.exports.getOneUser = (req, res) => {
             }
         }).select('-password');
     }
-}
+};
+
+module.exports.updateUser = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            await UserModel.findOneAndUpdate(
+                { _id: req.params.id },
+                {
+                    $set: {
+                        bio: req.body.bio
+                    }
+                },
+                { new: true, upsert: true, setDefaultsOnInsert: true }
+            )
+                .then((docs) => { return res.send(docs) })
+                .catch((err) => { return res.status(500).send({ message: err }) })
+        } catch (err) {
+            return res.status(500).json({ message: err })
+        }
+    }
+};
+
