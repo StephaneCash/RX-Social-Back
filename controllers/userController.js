@@ -53,7 +53,7 @@ module.exports.deleteUser = async (req, res) => {
             return res.status(500).json({ message: err })
         }
     }
-} 
+}  
   
 module.exports.followUser = async (req, res) => {
     if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
