@@ -81,7 +81,7 @@ module.exports.followUser = async (req, res) => {
             return res.status(400).json({ err: err })
         }
     }
-} 
+}  
 
 module.exports.unFollowUser = async (req, res) => {
 
