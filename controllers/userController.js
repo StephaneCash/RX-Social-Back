@@ -55,3 +55,35 @@ module.exports.deleteUser = async (req, res) => {
     }
 }
 
+module.exports.followUser = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            await UserModel.findByIdAndUpdate(
+                req.params.id,
+                { $addToSet: { following: req.body.idToFollow } },
+                { new: true, upsert: true },
+            ).then(response => {
+                res.status(201).json(response)
+            }).catch(error => {
+                return res.status(400).json({err: error});
+            })
+
+            await UserModel.findByIdAndUpdate(
+                req.body.idToFollow,
+                { $addToSet: { followers: req.params.id } },
+                { new: true, upsert: true },
+            ).catch(errors => {
+                return res.status(400).json({ err: errors })
+            })
+        } catch (err) {
+            return res.status(400).json({ err: err })
+        }
+    }
+}
+
+module.exports.unFollowUser = async (req, res) => {
+
+}
+

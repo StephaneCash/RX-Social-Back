@@ -11,5 +11,5 @@ mongoose
     .then(() => {
         console.log('Connexion successful à la DB')
     }).catch(err => {
-        console.log('Connexion failed à la DB', err)
+        console.log('Connexion impossible à la DB', err)
     })
