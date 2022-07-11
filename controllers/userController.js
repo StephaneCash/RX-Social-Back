@@ -53,8 +53,8 @@ module.exports.deleteUser = async (req, res) => {
             return res.status(500).json({ message: err })
         }
     }
-}  
-  
+}
+
 module.exports.followUser = async (req, res) => {
     if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
@@ -67,7 +67,7 @@ module.exports.followUser = async (req, res) => {
             ).then(response => {
                 res.status(201).json(response)
             }).catch(error => {
-                return res.status(400).json({err: error});
+                return res.status(400).json({ err: error });
             })
 
             await UserModel.findByIdAndUpdate(
@@ -81,9 +81,33 @@ module.exports.followUser = async (req, res) => {
             return res.status(400).json({ err: err })
         }
     }
-}  
+}
 
 module.exports.unFollowUser = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToUnfollow)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            await UserModel.findByIdAndUpdate(
+                req.params.id,
+                { $pull: { following: req.body.idToUnfollow } },
+                { new: true, upsert: true },
+            ).then(response => {
+                res.status(201).json(response)
+            }).catch(error => {
+                return res.status(400).json({ err: error });
+            })
 
+            await UserModel.findByIdAndUpdate(
+                req.body.idToUnfollow,
+                { $pull: { followers: req.params.id } },
+                { new: true, upsert: true },
+            ).catch(errors => {
+                return res.status(400).json({ err: errors })
+            })
+        } catch (err) {
+            return res.status(400).json({ err: err })
+        }
+    }
 }
 
