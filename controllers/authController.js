@@ -37,7 +37,7 @@ const signIn = async (req, res) => {
 const deconnexion = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });
     return res.json({ Logout: true })
-}
+} 
 
 module.exports = {
     signUp,
