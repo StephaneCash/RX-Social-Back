@@ -30,7 +30,7 @@ const signIn = async (req, res) => {
         res.cookie('jwt', token, { httpOnly: true, maxAge });
         res.status(200).json({ "message ": 'Utilisateur connecté avec succès', user: user._id })
     } catch (err) {
-        return res.status(500).json({ err: 'ERRURES' });
+        return res.status(500).json({ err: 'Email ou Password incorrect' });
     }
 }
 
