@@ -18,7 +18,7 @@ const signUp = async (req, res) => {
     catch (err) {
         res.status(500).json({ err: err });
     }
-
+ 
 }   
 
 const signIn = async (req, res) => {
