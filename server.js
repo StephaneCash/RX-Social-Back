@@ -4,7 +4,7 @@ require('dotenv').config({ path: './config/.env' })
 require('./config/db')
 const bodyParser = require('body-parser')
 const coockieParser = require('cookie-parser');
-const { checkUser } = require('./middleware/authMiddleware');
+const { checkUser, requireAuth } = require('./middleware/authMiddleware');
 const app = express();
 
 app.use(bodyParser.json());
@@ -13,6 +13,9 @@ app.use(coockieParser());
 
 // jwt authentication
 app.get('*', checkUser);
+app.get('/api/jwtid', requireAuth, (req, res) => {
+    res.status(200).send(res.locals.user._id);
+});
 
 //routes
 app.use('/api/users', userRoutes);
