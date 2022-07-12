@@ -17,10 +17,10 @@ const signUp = async (req, res) => {
     }
     catch (err) {
         res.status(500).json({ err: err });
-    } 
- 
-}   
-  
+    }
+
+}
+
 const signIn = async (req, res) => {
     const { email, password } = req.body;
 
@@ -32,12 +32,12 @@ const signIn = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ err: 'Email ou Password incorrect' });
     }
-}  
+}
 
 const deconnexion = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });
     return res.json({ Logout: true })
-} 
+}
 
 module.exports = {
     signUp,
