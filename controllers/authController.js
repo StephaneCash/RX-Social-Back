@@ -32,7 +32,7 @@ const signIn = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ err: 'Email ou Password incorrect' });
     }
-} 
+}  
 
 const deconnexion = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });
