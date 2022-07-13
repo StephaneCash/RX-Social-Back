@@ -37,5 +37,5 @@ module.exports.signInErrors = (err) => {
     if (err.message.includes('password'))
         errors.password = 'Le mot de passe est incorrect';
 
-    return errors;
+    return err.message;
 }

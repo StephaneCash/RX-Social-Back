@@ -25,7 +25,7 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     const { email, password } = req.body;
-    
+
     try {
         const user = await userModel.login(email, password);
         const token = createToken(user._id);
