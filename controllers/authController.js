@@ -1,6 +1,6 @@
 const userModel = require('../models/userModel');
 const jwt = require('jsonwebtoken');
-const { signUpErrors } = require('../utils/errorsUtiles')
+const { signUpErrors, signInErrors } = require('../utils/errorsUtiles')
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -25,14 +25,15 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     const { email, password } = req.body;
-
+    
     try {
         const user = await userModel.login(email, password);
         const token = createToken(user._id);
         res.cookie('jwt', token, { httpOnly: true, maxAge });
         res.status(200).json({ "message ": 'Utilisateur connecté avec succès', user: user._id })
     } catch (err) {
-        return res.status(500).json({ err: 'Email ou Password incorrect' });
+        const errors = signInErrors(err)
+        return res.status(500).json({ errors });
     }
 }
 
