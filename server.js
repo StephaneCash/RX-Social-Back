@@ -1,5 +1,8 @@
 const express = require('express');
+
 const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
+
 require('dotenv').config({ path: './config/.env' })
 require('./config/db')
 const bodyParser = require('body-parser')
@@ -19,6 +22,7 @@ app.get('/api/jwtid', requireAuth, (req, res) => {
 
 //routes
 app.use('/api/users', userRoutes);
+app.use('api/posts', postRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`App écoute sur le port ${process.env.PORT}`)
