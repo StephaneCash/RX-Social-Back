@@ -1,4 +1,5 @@
 const postModel = require('../models/postModel');
+const userModel = require('../models/userModel');
 
 const readPost = (req, res) => {
 
