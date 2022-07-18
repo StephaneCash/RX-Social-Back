@@ -1,6 +1,6 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
-const ObjetID = require('mongoose').Types.ObjectId;
+const ObjectID = require('mongoose').Types.ObjectId;
 
 const readPost = (req, res) => {
     postModel.find((err, docs) => {
@@ -9,7 +9,7 @@ const readPost = (req, res) => {
     })
 }
 
-const createPost = (req, res) => {
+const createPost = async (req, res) => {
     const newPost = new postModel({
         posterId: req.body.posterId,
         message: req.body.message,
@@ -19,15 +19,28 @@ const createPost = (req, res) => {
     });
 
     try {
-        const post = newPost.save();
+        const post = await newPost.save();
         return res.status(201).json(post)
     } catch (err) {
-        return res.status(400).json(err)
+        return res.status(400).send(err)
     }
 }
 
 const updatePost = (req, res) => {
-
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        const updatePosted = {
+            message: req.body.message,
+        }
+        postModel.findByIdAndUpdate(
+            req.params.id,
+            { $set: updatePosted },
+            { new: true },
+        )
+            .then((docs) => { return res.status(200).send(docs) })
+            .catch((err) => { return res.status(500).send({ message: err }) })
+    }
 }
 
 const deletePost = (req, res) => {
