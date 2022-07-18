@@ -62,11 +62,27 @@ const likePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
+        try {
+            postModel.findByIdAndUpdate(req.params.id,
+                { $addToSet: { likers: req.body.id } },
+                { new: true }
+            )
+                .then((docs) => { res.status(200).send(docs) })
+                .catch((err) => { return res.status(400).send({ message: err }) })
 
+            userModel.findByIdAndUpdate(req.body.id,
+                { $addToSet: { likes: req.params.id } },
+                { new: true }
+            )
+                .then((docs) => { res.status(200).send(docs) })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
     }
 }
 
-const unlikePost = (req, res) => {
+const unlikePost = async (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
