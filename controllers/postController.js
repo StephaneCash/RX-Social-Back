@@ -44,7 +44,18 @@ const updatePost = (req, res) => {
 }
 
 const deletePost = (req, res) => {
-
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        postModel.findByIdAndRemove(req.params.id,)
+            .then((docs) => {
+                return res.status(200).send({
+                    message: 'Post supprimé avec succès',
+                    data: docs
+                })
+            })
+            .catch((err) => { return res.status(500).send({ message: err }) })
+    }
 }
 
 module.exports = {
