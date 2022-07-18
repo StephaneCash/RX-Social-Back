@@ -86,8 +86,64 @@ const unlikePost = async (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
+        try {
+            postModel.findByIdAndUpdate(req.params.id,
+                { $pull: { likers: req.body.id } },
+                { new: true }
+            )
+                .then((docs) => { res.status(200).send(docs) })
+                .catch((err) => { return res.status(400).send({ message: err }) })
 
+            userModel.findByIdAndUpdate(req.body.id,
+                { $pull: { likes: req.params.id } },
+                { new: true }
+            )
+                .then((docs) => { res.status(200).send(docs) })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
     }
+}
+
+const commentPost = (req, res) => {
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        try {
+            return postModel.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $push: {
+                        comments: {
+                            commenterId: req.body.commenterId,
+                            commenterPseudo: req.body.commenterPseudo,
+                            text: req.body.text,
+                            timestamp: new Date().getTime()
+                        }
+                    }
+                },
+                { new: true }
+            )
+                .then((docs) => {
+                    res.status(200).send({
+                        message: 'Commentaire ajouté avec succès',
+                        data: docs
+                    })
+                })
+                .catch((err) => { return res.status(400).send({ message: err }) })
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
+    }
+}
+
+const editCommentPost = (req, res) => {
+
+}
+
+const deleteCommentPost = (req, res) => {
+
 }
 
 module.exports = {
@@ -96,5 +152,8 @@ module.exports = {
     updatePost,
     deletePost,
     likePost,
-    unlikePost
+    unlikePost,
+    commentPost,
+    editCommentPost,
+    deleteCommentPost
 }
