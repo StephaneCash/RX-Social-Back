@@ -142,7 +142,11 @@ const editCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
+        try {
 
+        } catch (err) {
+
+        }
     }
 }
 
@@ -150,7 +154,9 @@ const deleteCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
-
+        return postModel.findById(
+            req.params.id,
+        )
     }
 }
 
