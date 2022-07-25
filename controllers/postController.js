@@ -6,8 +6,8 @@ const readPost = (req, res) => {
     postModel.find((err, docs) => {
         if (!err) res.send(docs);
         else console.log('Erreur to get data : ', +err)
-    })
-}
+    }).sort({ createdAt: -1 });
+};
 
 const createPost = async (req, res) => {
     const newPost = new postModel({
@@ -139,7 +139,11 @@ const commentPost = (req, res) => {
 }
 
 const editCommentPost = (req, res) => {
-
+    if (!ObjectID.isValid(req.params.id)) {
+        return res.status(400).send('ID inconnu : ' + req.params.id)
+    } else {
+        
+    }
 }
 
 const deleteCommentPost = (req, res) => {
