@@ -8,7 +8,7 @@ module.exports.signUpErrors = (err) => {
     }
 
     if (err.message.includes('email')) {
-        errors.email = "Email incorrect" 
+        errors.email = "Email incorrect"
     } else {
         errors.email = ""
     }
@@ -38,4 +38,18 @@ module.exports.signInErrors = (err) => {
         errors.password = 'Le mot de passe est incorrect';
 
     return err.message;
+}
+
+module.exports.uploadErrors = (err) => {
+    let errors = { format: '', maxSize: '' };
+
+    if (err.message.includes('invalid file')) {
+        errors.format = "Format non pris en charge";
+    }
+
+    if (err.message.includes('max size')) {
+        errors.maxSize = "Fichier trop volumineux";
+    }
+
+    return errors;
 }
