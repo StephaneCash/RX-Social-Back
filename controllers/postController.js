@@ -143,9 +143,27 @@ const editCommentPost = (req, res) => {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
+            return postModel.findById(
+                req.params.id,
+                (err, docs) => {
+                    const repComment = docs.comments.find((comment) =>
+                        comment._id.equals(req.body.commentId)
+                    );
+                    if (repComment) {
+                        repComment.text = req.body.text;
+                    } else {
+                        return res.status(404).send('Comment not found ' + req.body.commentId);
+                    }
 
-        } catch (err) {
+                    return docs.save((err) => {
+                        if (!err) return res.status(200).send(docs);
+                        return res.status(500).send(err);
+                    })
+                }
+            )
 
+        } catch (error) {
+            return res.status(400).send(error);
         }
     }
 }
@@ -154,9 +172,27 @@ const deleteCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id)) {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
-        return postModel.findById(
-            req.params.id,
-        )
+        try {
+            return postModel.findById(
+                req.params.id,
+            ).then(docs => {
+                const repComment = docs.comments.find((comment) =>
+                    comment._id.equals(req.body.commentId)
+                )
+
+                if (!repComment) return res.status(404).send('Comment not found');
+                repComment.text = req.body.text;
+
+                return docs.save((err) => {
+                    if (!err) return res.status(200).send(docs);
+                    return res.status(500).send(err);
+                })
+            }).catch(err => {
+                return res.status(500).send(err);
+            })
+        } catch (error) {
+            return res.status(400).send(error);
+        }
     }
 }
 
