@@ -10,17 +10,14 @@ module.exports.uploadProfil = async (req, res) => {
             req.file.detectedMimeType !== "image/jpg" &&
             req.file.detectedMimeType !== "image/png" &&
             req.file.detectedMimeType !== "image/jpeg"
-        ) {
+        )
             throw Error("invalid file");
-        }
 
-        if (req.file.size > 1000000) {
-            throw Error('max size');
-        }
+        if (req.file.size > 1000000) throw Error('max size');
     } catch (err) {
         const errors = errorsUtiles.uploadErrors(err);
-        const typeFile = req.file.detectedMimeType
-        return res.status(400).json({ errors});
+        const file = req.file;
+        return res.status(400).json({ errors });
     }
 
     const fileName = req.body.name + ".jpg";
@@ -30,5 +27,5 @@ module.exports.uploadProfil = async (req, res) => {
         fs.createWriteStream(
             `${__dirname}/../client/public/uploads/profil/${fileName}`
         )
-    )
+    );
 };
