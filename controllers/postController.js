@@ -173,23 +173,21 @@ const deleteCommentPost = (req, res) => {
         return res.status(400).send('ID inconnu : ' + req.params.id)
     } else {
         try {
-            return postModel.findById(
+            return postModel.findByIdAndUpdate(
                 req.params.id,
-            ).then(docs => {
-                const repComment = docs.comments.find((comment) =>
-                    comment._id.equals(req.body.commentId)
-                )
-
-                if (!repComment) return res.status(404).send('Comment not found');
-                repComment.text = req.body.text;
-
-                return docs.save((err) => {
-                    if (!err) return res.status(200).send(docs);
-                    return res.status(500).send(err);
-                })
-            }).catch(err => {
-                return res.status(500).send(err);
-            })
+                {
+                    $pull: {
+                        comments: {
+                            _id: req.body.commentId
+                        }
+                    }
+                },
+                { new: true },
+                (err, docs) => {
+                    if (!err) return res.send(docs);
+                    else return res.status(500).send(err);
+                }
+            )
         } catch (error) {
             return res.status(400).send(error);
         }
