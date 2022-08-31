@@ -2,7 +2,7 @@ const router = require('express').Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const uploadController = require('../controllers/uploadController');
-const multer = require('multer');
+const multer = require('../middleware/multer');
 const upload = multer();
 
 // Authentication
@@ -21,6 +21,6 @@ router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.followUser);
 router.patch('/unFollowUser/:id', userController.unFollowUser);
 
-router.post('/upload', upload.single('file'), uploadController.uploadProfil)
+router.post('/upload', multer, uploadController.uploadProfil)
 
 module.exports = router;
