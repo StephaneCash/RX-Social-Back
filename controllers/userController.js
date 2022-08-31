@@ -29,12 +29,15 @@ module.exports.updateUser = async (req, res) => {
                 { _id: req.params.id },
                 {
                     $set: {
-                        bio: req.body.bio
+                        bio: req.body.bio,
+                        pseudo: req.body.pseudo
                     }
                 },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             )
-                .then((docs) => { return res.send(docs) })
+                .then((docs) => { res.status(200).json({
+                    docs, message: 'User updated'
+                }) })
                 .catch((err) => { return res.status(500).send({ message: err }) })
         } catch (err) {
             return res.status(500).json({ message: err })
