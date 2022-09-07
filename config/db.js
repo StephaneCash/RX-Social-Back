@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 mongoose
     .connect(
-        "mongodb+srv://" + process.env.DB_USER_PASS + "@cluster0.hqeafnf.mongodb.net/rxsocial",
+        "mongodb://localhost:27017/rxsocial",
         {
             useNewUrlParser: true,
             useUnifiedTopology: true,
