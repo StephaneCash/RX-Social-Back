@@ -1,6 +1,7 @@
 const postModel = require('../models/postModel');
 const userModel = require('../models/userModel');
 const ObjectID = require('mongoose').Types.ObjectId;
+const multer = require('multer');
 
 const readPost = (req, res) => {
     postModel.find((err, docs) => {
@@ -10,20 +11,47 @@ const readPost = (req, res) => {
 };
 
 const createPost = async (req, res) => {
-    const newPost = new postModel({
-        posterId: req.body.posterId,
-        message: req.body.message,
-        video: req.body.video,
-        likers: [],
-        comments: [],
+    
+    let Storage = multer.diskStorage({
+        destination: (req, file, callback) => {
+            callback(null, "images/posts");
+        },
+        filename: (req, file, callback) => {
+            const name = file.originalname.split(" ").join("_");
+            callback(null, Date.now() + name);
+        }
     });
 
-    try {
-        const post = await newPost.save();
-        return res.status(201).json(post)
-    } catch (err) {
-        return res.status(400).send(err)
-    }
+    const upload = multer({
+        storage: Storage
+    }).single('file');
+
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ err })
+        } else {
+            try {
+                const newPost = new postModel({
+                    posterId: req.body.posterId,
+                    message: req.body.message,
+                    picture: req.file !== null ? "../images/posts/" + Date.now() + req.file.originalname.split(" ").join("_") : "",
+                    video: req.body.video,
+                    likers: [],
+                    comments: [],
+                });
+
+                try {
+                    const post = await newPost.save();
+                    return res.status(201).json(post)
+                } catch (err) {
+                    return res.status(400).send(err)
+                }
+            }
+            catch (errors) {
+                return res.status(500).json(errors);
+            }
+        }
+    });
 }
 
 const updatePost = (req, res) => {
