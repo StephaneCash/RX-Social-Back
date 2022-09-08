@@ -10,7 +10,16 @@ const coockieParser = require('cookie-parser');
 const { checkUser, requireAuth } = require('./middleware/authMiddleware');
 const app = express();
 
-app.use(cors({ origin: process.env.CLIENT_URL }));
+const corsOptions = {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    'allowedHeaders': ['sessionId', 'Content-Type'],
+    'exposedHeaders': ['sessionId'],
+    'methods': 'GET, HEAD, PUT, PATCH, POST, DELETE',
+    'preflightContinue': false
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(coockieParser());
