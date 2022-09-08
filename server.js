@@ -10,7 +10,7 @@ const coockieParser = require('cookie-parser');
 const { checkUser, requireAuth } = require('./middleware/authMiddleware');
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(coockieParser());
