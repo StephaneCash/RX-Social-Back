@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
-
-const multer = require('../middleware/multer');
+const uploadController = require('../controllers/uploadController');
+//const multer = require('../middleware/multer');
 
 // Authentication
-router.post('/register', multer, authController.signUp);
+router.post('/register', authController.signUp);
 router.post('/login', authController.signIn);
 router.get('/logout', authController.deconnexion);
 
@@ -20,6 +20,6 @@ router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.followUser);
 router.patch('/unFollowUser/:id', userController.unFollowUser);
 
-//router.post('/upload', uploadController.upload)
+router.post('/upload', uploadController.uploadFile)
 
 module.exports = router;
