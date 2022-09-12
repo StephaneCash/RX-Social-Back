@@ -1,3 +1,4 @@
+const { response } = require('express');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/userModel');
 
@@ -35,6 +36,6 @@ module.exports.requireAuth = (req, res, next) => {
             }
         })
     } else {
-        console.log('Pas de token');
+        res.status(500).json("Pas de token")
     }
 }

@@ -29,7 +29,7 @@ const signIn = async (req, res) => {
     try {
         const user = await userModel.login(email, password);
         const token = createToken(user._id);
-        res.cookie('jwt', token, { httpOnly: true, maxAge });
+        res.cookie('jwt', token, { httpOnly: false,  maxAge });
         res.status(200).json({ "message ": 'Utilisateur connecté avec succès', user: user._id, token })
     } catch (err) {
         const errors = signInErrors(err)
