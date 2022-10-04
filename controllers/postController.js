@@ -11,14 +11,26 @@ const readPost = (req, res) => {
 };
 
 const createPost = async (req, res) => {
-    
+
     let Storage = multer.diskStorage({
         destination: (req, file, callback) => {
-            callback(null, "images/posts");
+            callback(null, "../front/public/images/posts")
         },
         filename: (req, file, callback) => {
-            const name = file.originalname.split(" ").join("_");
-            callback(null, Date.now() + name);
+            const MIME_TYPES = {
+                "image/jpg": "jpg",
+                "image/png": "png",
+                "image/jpeg": "jpg",
+                "image/gif": "gif"
+            };
+
+            const extension = MIME_TYPES[file.mimetype];
+
+            if (extension) {
+                callback(null, file.originalname ? file.originalname : req.body.file);
+            } else {
+                return
+            }
         }
     });
 
@@ -34,7 +46,7 @@ const createPost = async (req, res) => {
                 const newPost = new postModel({
                     posterId: req.body.posterId,
                     message: req.body.message,
-                    picture: req.file !== null ? "../images/posts/" + Date.now() + req.file.originalname.split(" ").join("_") : "",
+                    picture: "./images/posts/" + req.file.originalname.trim(),
                     video: req.body.video,
                     likers: [],
                     comments: [],
@@ -96,14 +108,12 @@ const likePost = (req, res) => {
                 { new: true }
             )
                 .then((docs) => { res.status(200).send(docs) })
-                .catch((err) => { return res.status(400).send({ message: err }) })
+                .catch((err) => { return res.status(500).send({ message: err }) })
 
             userModel.findByIdAndUpdate(req.body.id,
                 { $addToSet: { likes: req.params.id } },
                 { new: true }
             )
-                .then((docs) => { res.status(200).send(docs) })
-                .catch((err) => { return res.status(400).send({ message: err }) })
         } catch (err) {
             return res.status(400).send({ message: err })
         }
@@ -126,8 +136,6 @@ const unlikePost = async (req, res) => {
                 { $pull: { likes: req.params.id } },
                 { new: true }
             )
-                .then((docs) => { res.status(200).send(docs) })
-                .catch((err) => { return res.status(400).send({ message: err }) })
         } catch (err) {
             return res.status(400).send({ message: err })
         }
