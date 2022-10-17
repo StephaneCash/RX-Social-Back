@@ -151,7 +151,7 @@ const commentPost = (req, res) => {
                 req.params.id,
                 {
                     $push: {
-                        comments: {
+                        comments: { 
                             commenterId: req.body.commenterId,
                             commenterPseudo: req.body.commenterPseudo,
                             text: req.body.text,
