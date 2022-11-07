@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const app = express();
+const socket = require('socket.io');
+
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes.js');
 const messagesRouter = require("./routes/messages.routes");
@@ -9,7 +12,6 @@ require('./config/db')
 const bodyParser = require('body-parser')
 const coockieParser = require('cookie-parser');
 const { checkUser, requireAuth } = require('./middleware/authMiddleware');
-const app = express();
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -37,6 +39,30 @@ app.use('/api/posts', postRoutes);
 app.use("/api/messages", messagesRouter);
 
 
-app.listen(process.env.PORT, () => {
+const serveur = app.listen(process.env.PORT, () => {
     console.log(`App écoute sur le port ${process.env.PORT}`)
 })
+
+const io = socket(serveur, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+})
+
+global.onlineUsers = new Map();
+
+io.on("connection", (socket) => {
+    global.chatSocket = socket;
+    socket.on("add-user", (userId) => {
+        onlineUsers.set(userId, socket.id);
+    });
+
+    socket.on("send-msg", (data) => {
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket) {
+            socket.to(sendUserSocket).emit("msg-received", data.message)
+        }
+    })
+});
