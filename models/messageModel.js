@@ -14,8 +14,11 @@ const messageSchema = new mongoose.Schema(
             ref: "users",
             required: true
         },
-        picture: {
+        file: {
             type: String,
+        },
+        dateNow: {
+            type: Number
         },
     },
     {

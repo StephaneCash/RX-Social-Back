@@ -11,10 +11,11 @@ module.exports.addMessage = async (req, res, next) => {
                 message: { text: message, },
                 users: [from, to],
                 sender: from,
-                videoUrl: "./" + file.name
+                file: file.name,
+                dateNow: Date.now(),
             });
             if (data) {
-                res.status(201).json({ message: "Message envoyé avec succès" })
+                res.status(201).json({ message: "Message envoyé avec succès", data })
             } else {
                 return res.status(400).json({ message: "Message non envoyé" });
             }
@@ -28,7 +29,8 @@ module.exports.addMessage = async (req, res, next) => {
                 message: { text: message, },
                 users: [from, to],
                 sender: from,
-                videoUrl: ""
+                file: "",
+                dateNow: Date.now(),
             });
             if (data) {
                 res.status(201).json({ message: "Message envoyé avec succès" })
@@ -54,7 +56,9 @@ module.exports.getAllMessage = async (req, res, next) => {
         const messagesProject = messages.map((msg) => {
             return {
                 fromSelf: msg.sender.toString() === from,
-                message: msg.message.text
+                message: msg.message.text,
+                file: msg.file,
+                dateNow: msg.dateNow
             };
         });
         res.status(200).json(messagesProject);

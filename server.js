@@ -66,7 +66,10 @@ io.on("connection", (socket) => {
     socket.on("send-msg", (data) => {
         const sendUserSocket = onlineUsers.get(data.to);
         if (sendUserSocket) {
-            socket.to(sendUserSocket).emit("msg-received", data.message)
+            const message = data.message;
+            const file = data.file
+            const dateNow = data.dateNow
+            socket.to(sendUserSocket).emit("msg-received", { message, file, dateNow })
         }
     })
 });
