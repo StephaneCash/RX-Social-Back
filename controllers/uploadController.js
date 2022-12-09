@@ -31,11 +31,12 @@ const uploadFile = (req, res) => {
     }).single('file');
 
     upload(req, res, async (err) => {
-        console.log(req.file)
         if (err) {
             return res.status(500).json({ err })
         } else {
             try {
+
+                console.log(req.body)
                 const MIME_TYPES = {
                     "image/jpg": "jpg",
                     "image/png": "png",

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const socket = require('socket.io');
+const expressFileUpload = require("express-fileupload");
 
 const userRoutes = require('./routes/user.routes');
 const postRoutes = require('./routes/post.routes.js');
@@ -26,6 +27,9 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(coockieParser());
+app.use(expressFileUpload({
+    createParentPath: true
+}))
 
 // jwt authentication
 app.get('*', checkUser);
