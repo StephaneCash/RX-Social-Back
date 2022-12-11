@@ -11,59 +11,39 @@ const readPost = (req, res) => {
 };
 
 const createPost = async (req, res) => {
-
-    let Storage = multer.diskStorage({
-        destination: (req, file, callback) => {
-            callback(null, "../front/public/images/posts")
-        },
-        filename: (req, file, callback) => {
-            const MIME_TYPES = {
-                "image/jpg": "jpg",
-                "image/png": "png",
-                "image/jpeg": "jpg",
-                "image/gif": "gif"
-            };
-
-            const extension = MIME_TYPES[file.mimetype];
-
-            if (extension) {
-                callback(null, file.originalname ? file.originalname : req.body.file);
-            } else {
-                return
-            }
-        }
-    });
-
-    const upload = multer({
-        storage: Storage
-    }).single('file');
-
-    upload(req, res, async (err) => {
-        if (err) {
+    if (req.files) {
+        try {
+            const file = req.files.file;
+            file.mv("../front/public/images/posts/" + file.name);
+            const newPost = await new postModel({
+                posterId: req.body.posterId,
+                message: req.body.message,
+                picture: "./images/posts/" + file.name,
+                video: req.body.video,
+                likers: [],
+                comments: [],
+            });
+            const post = await newPost.save();
+            return res.status(201).json(post)
+        } catch (err) {
             return res.status(500).json({ err })
-        } else {
-            try {
-                const newPost = new postModel({
-                    posterId: req.body.posterId,
-                    message: req.body.message,
-                    picture: "./images/posts/" + req.file.originalname.trim(),
-                    video: req.body.video,
-                    likers: [],
-                    comments: [],
-                });
-
-                try {
-                    const post = await newPost.save();
-                    return res.status(201).json(post)
-                } catch (err) {
-                    return res.status(400).send(err)
-                }
-            }
-            catch (errors) {
-                return res.status(500).json(errors);
-            }
         }
-    });
+    } else {
+        try {
+            const newPost = await new postModel({
+                posterId: req.body.posterId,
+                message: req.body.message,
+                picture: "",
+                video: '',
+                likers: [],
+                comments: [],
+            });
+            const post = await newPost.save();
+            return res.status(201).json(post)
+        } catch (err) {
+            return res.status(500).json({ err })
+        }
+    }
 }
 
 const updatePost = (req, res) => {
@@ -151,7 +131,7 @@ const commentPost = (req, res) => {
                 req.params.id,
                 {
                     $push: {
-                        comments: { 
+                        comments: {
                             commenterId: req.body.commenterId,
                             commenterPseudo: req.body.commenterPseudo,
                             text: req.body.text,
